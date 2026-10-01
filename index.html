@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liste de naissance</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: #f7f0e5;
+      font-family: "Bradley Hand", "Comic Sans MS", cursive;
+    }
+
+    .gift {
+      position: relative;
+      width: min(420px, 100%);
+      padding: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      text-align: center;
+      background: #fffaf2;
+      border: 2px dashed #a8b99c;
+      border-radius: 24px 18px 26px 16px;
+      box-shadow: 0 10px 24px rgba(90, 70, 50, 0.15);
+      transition: opacity 180ms ease, filter 180ms ease, transform 180ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .gift:hover { transform: rotate(-0.5deg) scale(1.01); }
+
+    .gift img,
+    .gift canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+    }
+
+    .gift canvas {
+      display: none;
+    }
+
+    .gift.checked img {
+      display: none;
+    }
+
+    .gift.checked canvas {
+      display: block;
+    }
+
+    .gift h1 {
+      margin: 14px 0 2px;
+      color: #9b5f4a;
+      font-size: clamp(1.7rem, 6vw, 2.3rem);
+      font-weight: 700;
+    }
+
+    .gift.checked {
+      filter: grayscale(100%);
+      opacity: 0.55;
+    }
+
+    .gift.checked::before,
+    .gift.checked::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 5%;
+      width: 90%;
+      height: 10px;
+      background: #c92a2a;
+      border-radius: 999px;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+      pointer-events: none;
+    }
+
+    .gift.checked::before { transform: rotate(35deg); }
+    .gift.checked::after  { transform: rotate(-35deg); }
+  </style>
+</head>
+<body>
+  <article class="gift" id="cadeau" role="button" tabindex="0" aria-pressed="false">
+    <img id="gif" src="brosse_cheveux.gif" alt="Brosse à cheveux">
+    <canvas id="image-figee" aria-hidden="true"></canvas>
+    <h1>Brosse à cheveux</h1>
+  </article>
+
+  <script>
+    const cadeau = document.getElementById("cadeau");
+    const gif = document.getElementById("gif");
+    const imageFigee = document.getElementById("image-figee");
+
+    function figerGif() {
+      imageFigee.width = gif.naturalWidth;
+      imageFigee.height = gif.naturalHeight;
+      imageFigee.getContext("2d").drawImage(gif, 0, 0);
+    }
+
+    function basculerCroix() {
+      const seraCoche = !cadeau.classList.contains("checked");
+
+      if (seraCoche) {
+        figerGif();
+      }
+
+      cadeau.classList.toggle("checked", seraCoche);
+      cadeau.setAttribute("aria-pressed", String(seraCoche));
+    }
+
+    cadeau.addEventListener("click", basculerCroix);
+    cadeau.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        basculerCroix();
+      }
+    });
+  </script>
+</body>
+</html>
