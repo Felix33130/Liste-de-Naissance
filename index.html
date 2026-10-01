@@ -48,7 +48,7 @@
   </article>
 
   <script>
-    const SUPABASE_URL = "https://pbtvxdmvyfwjtebgyerr.supabase.co/rest/v1/";
+   const SUPABASE_URL = "https://pbtvxdmvyfwjtebgyerr.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Pgn4b2AecYIBNQ3gyUXiXQ_9HcVgJA0";
     const cadeau = document.getElementById("cadeau");
     const gif = document.getElementById("gif");
@@ -70,7 +70,7 @@
     async function lireEtat() {
       const response = await fetch(
         `${SUPABASE_URL}/rest/v1/gifts?id=eq.brosse_cheveux&select=reserved`,
-        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+        { headers: { apikey: SUPABASE_KEY } }
       );
       if (!response.ok) return;
       const rows = await response.json();
@@ -88,7 +88,6 @@
           method: "PATCH",
           headers: {
             apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${SUPABASE_KEY}`,
             "Content-Type": "application/json",
             Prefer: "return=minimal"
           },
