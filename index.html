@@ -3,13 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Liste de naissance</title>
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -18,7 +14,7 @@
       place-items: center;
       padding: 24px;
       background: #f7f0e5;
-      font-family: "Marker Felt", "Chalkboard SE", cursive;
+      font-family: "Marker Felt", "Chalkboard SE", "Noteworthy", cursive;
     }
 
     .gift {
@@ -30,7 +26,7 @@
       cursor: pointer;
       text-align: center;
       background: transparent;
-      border: none;
+      border: 0;
       box-shadow: none;
       -webkit-tap-highlight-color: transparent;
     }
@@ -40,26 +36,18 @@
       display: block;
       width: 100%;
       height: auto;
-      border: none;
+      border: 0;
       border-radius: 0;
     }
 
-    .gift canvas {
-      display: none;
-    }
-
-    .gift.checked img {
-      display: none;
-    }
-
-    .gift.checked canvas {
-      display: block;
-    }
+    .gift canvas { display: none; }
+    .gift.checked img { display: none; }
+    .gift.checked canvas { display: block; }
 
     .gift h1 {
       margin: 14px 0 0;
       color: #9b5f4a;
-      font-family: "Marker Felt", "Chalkboard SE", cursive;
+      font-family: "Marker Felt", "Chalkboard SE", "Noteworthy", cursive;
       font-size: clamp(1.8rem, 6vw, 2.4rem);
       font-weight: normal;
     }
@@ -67,10 +55,8 @@
     .gift.checked {
       filter: grayscale(100%);
       opacity: 0.55;
-      cursor: default;
     }
 
-    /* Croix rouge irrégulière, façon feutre enfant */
     .gift.checked::before,
     .gift.checked::after {
       content: "";
@@ -98,53 +84,31 @@
     }
   </style>
 </head>
-
 <body>
-
-  <article
-    class="gift"
-    id="cadeau"
-    role="button"
-    tabindex="0"
-    aria-pressed="false"
-  >
-    <img
-      eux.gif
-
-    <canvas
-      id="image-figee"
-      aria-hidden="true"
-    ></canvas>
-
+  <article class="gift" id="cadeau" role="button" tabindex="0" aria-pressed="false">
+    <img id="gif" src="brosse_cheveux.gif" alt="Brosse à cheveux">
+    <canvas id="image-figee" aria-hidden="true"></canvas>
     <h1>Brosse à cheveux</h1>
   </article>
 
   <script>
-    const SUPABASE_URL = "https://pbtvxdmvyfwjtebgyerr.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_Pgn4b2AecYIBNQ3gyUXiXQ_9HcVgJA0";
+    const SUPABASE_URL = "COLLE_ICI_API_URL";
+    const SUPABASE_KEY = "COLLE_ICI_PUBLISHABLE_KEY";
 
     const cadeau = document.getElementById("cadeau");
     const gif = document.getElementById("gif");
     const imageFigee = document.getElementById("image-figee");
+    let actionEnCours = false;
 
     function figerGif() {
-      if (!gif.complete || !gif.naturalWidth) {
-        return;
-      }
-
+      if (!gif.complete || !gif.naturalWidth) return;
       imageFigee.width = gif.naturalWidth;
       imageFigee.height = gif.naturalHeight;
-
-      imageFigee
-        .getContext("2d")
-        .drawImage(gif, 0, 0);
+      imageFigee.getContext("2d").drawImage(gif, 0, 0);
     }
 
     function afficherEtat(reserved) {
-      if (reserved) {
-        figerGif();
-      }
-
+      if (reserved) figerGif();
       cadeau.classList.toggle("checked", reserved);
       cadeau.setAttribute("aria-pressed", String(reserved));
     }
@@ -152,78 +116,60 @@
     async function lireEtat() {
       const response = await fetch(
         `${SUPABASE_URL}/rest/v1/gifts?id=eq.brosse_cheveux&select=reserved`,
-        {
-          headers: {
-            apikey: SUPABASE_KEY
-          }
-        }
+        { headers: { apikey: SUPABASE_KEY } }
       );
 
-      if (!response.ok) {
-        return;
-      }
-
+      if (!response.ok) return;
       const lignes = await response.json();
-
-      if (lignes.length > 0) {
-        afficherEtat(lignes[0].reserved === true);
-      }
+      if (lignes.length) afficherEtat(lignes[0].reserved === true);
     }
 
-    async function cocherCadeau() {
-      if (cadeau.classList.contains("checked")) {
-        return;
-      }
+    async function changerEtat() {
+      if (actionEnCours) return;
 
-      const confirmation = window.confirm(
-        "Barrer définitivement ce cadeau ?"
-      );
+      const estBarre = cadeau.classList.contains("checked");
+      const nouvelEtat = !estBarre;
+      const message = nouvelEtat
+        ? "Barrer ce cadeau ?"
+        : "Rendre ce cadeau de nouveau disponible ?";
 
-      if (!confirmation) {
-        return;
-      }
+      if (!window.confirm(message)) return;
+      actionEnCours = true;
 
-      const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/gifts?id=eq.brosse_cheveux`,
-        {
-          method: "PATCH",
-
-          headers: {
-            apikey: SUPABASE_KEY,
-            "Content-Type": "application/json",
-            Prefer: "return=minimal"
-          },
-
-          body: JSON.stringify({
-            reserved: true
-          })
-        }
-      );
-
-      if (response.ok) {
-        afficherEtat(true);
-      } else {
-        window.alert(
-          "La réservation n'a pas pu être enregistrée."
+      try {
+        const response = await fetch(
+          `${SUPABASE_URL}/rest/v1/gifts?id=eq.brosse_cheveux`,
+          {
+            method: "PATCH",
+            headers: {
+              apikey: SUPABASE_KEY,
+              "Content-Type": "application/json",
+              Prefer: "return=minimal"
+            },
+            body: JSON.stringify({ reserved: nouvelEtat })
+          }
         );
+
+        if (!response.ok) throw new Error("Mise à jour refusée");
+        afficherEtat(nouvelEtat);
+      } catch (erreur) {
+        window.alert("La modification n'a pas pu être enregistrée.");
+      } finally {
+        actionEnCours = false;
       }
     }
 
-    cadeau.addEventListener("click", cocherCadeau);
-
-    cadeau.addEventListener("keydown", function (event) {
+    cadeau.addEventListener("click", changerEtat);
+    cadeau.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        cocherCadeau();
+        changerEtat();
       }
     });
 
     gif.addEventListener("load", lireEtat);
-
     lireEtat();
-
     setInterval(lireEtat, 3000);
   </script>
-
 </body>
 </html>
