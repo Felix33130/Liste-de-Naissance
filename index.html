@@ -96,14 +96,17 @@
 </head>
 <body>
   <article class="gift" id="cadeau" role="button" tabindex="0" aria-pressed="false">
-    <img id="gif" src="brosse_cheveux.gif" alt="Brosse à cheveux">
-    <canvas id="image-figee" aria-hidden="true"></canvas>
-    <h1>Brosse à cheveux</h1>
-  </article>
-<div class="cross" aria-hidden="true">
-<span></span>
-<span></span>
-</div>
+  <img id="gif" src="brosse_cheveux.gif" alt="Brosse à cheveux">
+
+  <canvas id="image-figee" aria-hidden="true"></canvas>
+
+  <div class="cross" aria-hidden="true">
+    <span></span>
+    <span></span>
+  </div>
+
+  <h1>Brosse à cheveux</h1>
+</article>
   <script>
     const SUPABASE_URL = "COLLE_ICI_API_URL";
     const SUPABASE_KEY = "COLLE_ICI_PUBLISHABLE_KEY";
@@ -120,7 +123,7 @@
       imageFigee.getContext("2d").drawImage(gif, 0, 0);
     }
 
-    function afficherEtat(reserved) {
+    function afficherEtat(reserved)
   if (!reserved) {
     cadeau.classList.remove("checked");
     cadeau.setAttribute("aria-pressed", "false");
@@ -139,7 +142,6 @@
     }, { once: true });
   }
 }
-    }
 
     async function lireEtat() {
       const response = await fetch(
