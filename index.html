@@ -57,26 +57,36 @@
       opacity: 0.55;
     }
 
-    .gift.checked::before,
-    .gift.checked::after {
-      content: "";
-      position: absolute;
-      z-index: 2;
-      top: 46%;
-      left: 4%;
-      width: 92%;
-      height: 15px;
-      background: #d73524;
-      border-radius: 60% 40% 55% 45%;
-      box-shadow:
-        0 2px 0 rgba(150, 20, 15, 0.25),
-        0 -2px 0 rgba(255, 100, 70, 0.25);
-      pointer-events: none;
-    }
+    .cross {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  pointer-events: none;
+}
 
-    .gift.checked::before {
-      transform: rotate(34deg) translateY(-4px);
-    }
+.gift.checked .cross {
+  display: block;
+}
+
+.cross span {
+  position: absolute;
+  top: 46%;
+  left: 4%;
+  width: 92%;
+  height: 15px;
+  background: #d73524;
+  border-radius: 60% 40% 55% 45%;
+}
+
+.cross span:first-child {
+  transform: rotate(34deg);
+}
+
+.cross span:last-child {
+  height: 12px;
+  transform: rotate(-31deg);
+}
 
     .gift.checked::after {
       height: 12px;
@@ -90,7 +100,10 @@
     <canvas id="image-figee" aria-hidden="true"></canvas>
     <h1>Brosse à cheveux</h1>
   </article>
-
+<div class="cross" aria-hidden="true">
+<span></span>
+<span></span>
+</div>
   <script>
     const SUPABASE_URL = "COLLE_ICI_API_URL";
     const SUPABASE_KEY = "COLLE_ICI_PUBLISHABLE_KEY";
