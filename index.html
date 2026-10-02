@@ -108,9 +108,24 @@
     }
 
     function afficherEtat(reserved) {
-      if (reserved) figerGif();
-      cadeau.classList.toggle("checked", reserved);
-      cadeau.setAttribute("aria-pressed", String(reserved));
+  if (!reserved) {
+    cadeau.classList.remove("checked");
+    cadeau.setAttribute("aria-pressed", "false");
+    return;
+  }
+
+  if (gif.complete && gif.naturalWidth) {
+    figerGif();
+    cadeau.classList.add("checked");
+    cadeau.setAttribute("aria-pressed", "true");
+  } else {
+    gif.addEventListener("load", function attendreGif() {
+      figerGif();
+      cadeau.classList.add("checked");
+      cadeau.setAttribute("aria-pressed", "true");
+    }, { once: true });
+  }
+}
     }
 
     async function lireEtat() {
